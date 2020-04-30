@@ -12,6 +12,6 @@ export class NotificationService {
   }
 
   printConfirmationDialog(title: string, message: string, okCallback: () => any) {
-    alertify.confirm(title, message, function () { okCallback(); }, function () { alertify.error('Cancel') });
+    alertify.confirm(title, message, function () { okCallback(); }, function () { alertify.error('Cancel'); });
   }
 }

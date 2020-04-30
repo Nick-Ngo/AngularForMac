@@ -4,6 +4,10 @@ import { NotificationService } from 'app/core/services/notification.service';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { MessageContstants } from 'app/core/common/message.constants';
 import { IMultiSelectOption } from 'angular-2-dropdown-multiselect';
+import { UploadService } from '../../core/services/upload.service';
+import { SystemConstants } from '../../core/common/system.constants';
+
+// create moment
 declare var moment: any;
 @Component({
   selector: 'app-user',
@@ -13,6 +17,8 @@ declare var moment: any;
 
 export class UserComponent implements OnInit {
   @ViewChild('modelAddEdit') public modelAddEdit: ModalDirective;
+  @ViewChild('avatar') avatar;
+  public baseFolder: string = SystemConstants.BASE_API;
   public myRoles: string[] = [];
   public pageIndex = 1;
   public pageSize = 20;
@@ -30,8 +36,14 @@ export class UserComponent implements OnInit {
     alwaysShowCalendars: false, // auto show calendar
     singleDatePicker: true // single date
   };
+
+  public selectedDate(value: any) {
+    this.entity.BirthDay = moment(value.end._d).format('DD/MM/YYYY');
+  }
+
   // contructor
-  constructor(private _dataService: DataService, private _notificationService: NotificationService) { }
+  // tslint:disable-next-line:max-line-length
+  constructor(private _dataService: DataService, private _notificationService: NotificationService, private _uploadService: UploadService) { }
 
   ngOnInit() {
     this.loadRoles();
@@ -53,7 +65,7 @@ export class UserComponent implements OnInit {
   loadRoles() {
     this._dataService.get('/api/appRole/getlistall').subscribe((response: any[]) => {
       this.allRoles = [];
-      for (let role of response) {
+      for (const role of response) {
         this.allRoles.push({ id: role.Name, name: role.Description });
       }
     }, error => this._dataService.handleError(error));
@@ -64,10 +76,13 @@ export class UserComponent implements OnInit {
     this._dataService.get('/api/appUser/detail/' + id)
       .subscribe((response: any) => {
         this.entity = response;
-        for(let role of this.entity.Roles){
+        for (const role of this.entity.Roles) {
           this.myRoles.push(role);
         }
-        this.entity.BirthDay = moment(new Date(this.entity.BirthDay)).format("DD/MM/YYYY");
+        let a = this.baseFolder;
+        a = a + '/UploadedFiles/' + this.entity.Avatar;
+        this.entity.Avatar = a;
+        this.entity.BirthDay = moment(new Date(this.entity.BirthDay)).format('DD/MM/YYYY');
       });
   }
 
@@ -92,27 +107,44 @@ export class UserComponent implements OnInit {
   // update
   saveChange(valid: boolean) {
     if (valid) {
-      if (this.entity.Id === undefined) {
-        // call api create user
-        this._dataService.post('/api/appUser/add', JSON.stringify(this.entity)).subscribe((response: any) => {
-          this.loadData();
-          this.modelAddEdit.hide();
-          this._notificationService.printSuccessMessage(MessageContstants.CREATED_OK_MSG);
-        }, error => this._dataService.handleError(error));
+      // upload image
+      this.entity.Roles = this.myRoles;
+      const file = this.avatar.nativeElement;
+      // post file
+      if (file.files.length > 0) {
+        this._uploadService.postWithFile('/api/upload/saveImage', null, file.files).then((imgUrl: string) => {
+          this.entity.Avatar = imgUrl;
+        }).then(() => {
+          this.saveData();
+        });
       } else {
-        // call api update user
-        this._dataService.put('/api/appUser/update', JSON.stringify(this.entity)).subscribe((response: any) => {
-          this.loadData();
-          this.modelAddEdit.hide();
-          this._notificationService.printSuccessMessage(MessageContstants.UPDATED_OK_MSG);
-        }, error => this._dataService.handleError(error));
+        this.saveData();
       }
+    }
+  }
+
+  // save data
+  private saveData() {
+    if (this.entity.Id === undefined) {
+      // call api create user
+      this._dataService.post('/api/appUser/add', JSON.stringify(this.entity)).subscribe((response: any) => {
+        this.loadData();
+        this.modelAddEdit.hide();
+        this._notificationService.printSuccessMessage(MessageContstants.CREATED_OK_MSG);
+      }, error => this._dataService.handleError(error));
+    } else {
+      // call api update user
+      this._dataService.put('/api/appUser/update', JSON.stringify(this.entity)).subscribe((response: any) => {
+        this.loadData();
+        this.modelAddEdit.hide();
+        this._notificationService.printSuccessMessage(MessageContstants.UPDATED_OK_MSG);
+      }, error => this._dataService.handleError(error));
     }
   }
 
   // delete item
   deleteItem(id: any) {
-    this._notificationService.printConfirmationDialog("Nofication", MessageContstants.CONFIRM_DELETE_MSG, () => this.deleteItemConfirm(id));
+    this._notificationService.printConfirmationDialog('Nofication', MessageContstants.CONFIRM_DELETE_MSG, () => this.deleteItemConfirm(id));
   }
 
   // function delete confirm
@@ -124,7 +156,7 @@ export class UserComponent implements OnInit {
   }
 
   // get value gender in radio button
-  public selectGender(event){
-    this.entity.Gender = event.target.value
+  public selectGender(event) {
+    this.entity.Gender = event.target.value;
   }
 }

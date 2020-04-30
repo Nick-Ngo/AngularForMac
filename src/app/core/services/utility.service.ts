@@ -12,24 +12,29 @@ export class UtilityService {
     this._router = router;
   }
 
+  // function convert date
   convertDateTime(date: Date) {
     const _formattedDate = new Date(date.toString());
     return _formattedDate.toDateString();
   }
 
+  // menu
   navigate(path: string) {
     this._router.navigate([path]);
   }
+
   navigateToLogin() {
     this._router.navigate([UrlConstants.LOGIN]);
   }
+
+  // map value and change tree view
   Unflatten = (arr: any[]): any[] => {
     const map = {};
     const roots: any[] = [];
     for (let i = 0; i < arr.length; i += 1) {
       const node = arr[i];
       node.children = [];
-      map[node.Id] = i; // use map to look-up the parents
+      map[node.ID] = i; // use map to look-up the parents
       if (node.ParentId !== null) {
         arr[map[node.ParentId]].children.push(node);
       } else {
@@ -39,7 +44,7 @@ export class UtilityService {
     return roots;
   }
 
-
+  // change string
   MakeSeoTitle(input: string) {
     if (input === undefined || input === '') {
       return '';

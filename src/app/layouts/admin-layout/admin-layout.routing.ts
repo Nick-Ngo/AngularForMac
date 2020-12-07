@@ -1,4 +1,5 @@
-import { Routes } from '@angular/router';
+import { AuthGuard } from './../../shared/guards/auth.guard';
+import { Routes, RouterModule } from '@angular/router';
 
 import { DashboardComponent } from '../../pages/dashboard/dashboard.component';
 
@@ -10,7 +11,7 @@ export const AdminLayoutRoutes: Routes = [
         data: {
             functionCode: 'SYSTEM'
         },
-        // canActivate: [AuthGuard]
+        canActivate: [AuthGuard]
     },
     {
         path: 'contents', 
@@ -18,6 +19,6 @@ export const AdminLayoutRoutes: Routes = [
         data: {
             functionCode: 'CONTENT'
         },
-        // canActivate: [AuthGuard]
+        canActivate: [AuthGuard]
     },
 ];

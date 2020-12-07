@@ -1,7 +1,9 @@
+import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
+import { AuthGuard } from './shared/guards/auth.guard';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
@@ -35,7 +37,14 @@ import { CkeditorComponent } from './shared/components/ckeditor/ckeditor.compone
     ValidationMessageComponent,
     CkeditorComponent,
   ],
-  providers: [],
+  providers: [
+    AuthGuard,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

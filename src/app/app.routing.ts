@@ -1,3 +1,4 @@
+import { AuthGuard } from './shared/guards/auth.guard';
 import { NgModule } from '@angular/core';
 import { CommonModule, } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
@@ -9,16 +10,15 @@ import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'dashboard',
-    pathMatch: 'full',
-  },
-  {
-    path: '',
     component: AdminLayoutComponent,
     children: [
       {
         path: '',
-        loadChildren: './layouts/admin-layout/admin-layout.module#AdminLayoutModule'
+        loadChildren: './layouts/admin-layout/admin-layout.module#AdminLayoutModule',
+        data: {
+          functionCode: 'DASHBOARD'
+        },
+        canActivate: [AuthGuard],
       }
     ]
   },
@@ -32,29 +32,17 @@ const routes: Routes = [
       }
     ]
   },
-  {
-    path: '**',
-    redirectTo: 'not-found'
-  },
-  {
-    path: 'auth-callback',
-    loadChildren: '../app/auth/auth-callback/auth-callback.module#AuthCallbackModule'
-  },
-  {
-    path: 'not-found',
-    loadChildren: './../../pages/not-found/not-found.module#NotFoundModule'
-  }
+  { path: '**', redirectTo: 'not-found' },
+  { path: 'auth-callback', loadChildren: '../app/auth/auth-callback/auth-callback.module#AuthCallbackModule' },
+  { path: 'not-found', loadChildren: './pages/not-found/not-found.module#NotFoundModule' }
 ];
 
 @NgModule({
   imports: [
     CommonModule,
     BrowserModule,
-    RouterModule.forRoot(routes, {
-      useHash: true
-    })
+    RouterModule.forRoot(routes, { useHash: true })
   ],
-  exports: [
-  ],
+  exports: [RouterModule],
 })
 export class AppRoutingModule { }

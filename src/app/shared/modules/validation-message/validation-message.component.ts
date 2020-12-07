@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-validation-message',
@@ -6,7 +7,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./validation-message.component.scss']
 })
 export class ValidationMessageComponent implements OnInit {
-
+  @Input() entityForm: FormGroup;
+  @Input() fieldName: string;
+  @Input() validationMessages: any;
   constructor() { }
 
   ngOnInit(): void {

@@ -5,16 +5,18 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthLayoutRoutes } from './auth-layout.routing';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { LoginComponent } from '../../pages/login/login.component';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @NgModule({
   imports: [
     CommonModule,
     RouterModule.forChild(AuthLayoutRoutes),
-    FormsModule
-    // NgbModule
+    FormsModule,
+    NgbModule
   ],
+  providers: [NgxSpinnerService],
   declarations: [
     LoginComponent
-  ]
+  ],
 })
 export class AuthLayoutModule { }

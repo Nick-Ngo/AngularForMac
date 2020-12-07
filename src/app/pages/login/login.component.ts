@@ -1,4 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { AuthService } from 'src/app/shared/services/auth.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-login',
@@ -6,14 +8,16 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  constructor() { }
+  constructor(private authService: AuthService, private spinner: NgxSpinnerService) { }
 
   ngOnInit() {
   }
+
   ngOnDestroy() {
   }
-  // login() {
-  //   this.spinner.show();
-  //   this.authService.login();
-  // }
+
+  login() {
+    this.spinner.show();
+    this.authService.login();
+  }
 }

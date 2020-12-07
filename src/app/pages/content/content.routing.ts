@@ -1,3 +1,4 @@
+import { AuthGuard } from './../../shared/guards/auth.guard';
 import { OrderComponent } from "./order/order.component";
 import { CategoryComponent } from "./category/category.component";
 import { ProductComponent } from "./product/product.component";
@@ -11,7 +12,7 @@ const routes: Routes = [
         data: {
             functionCode: "CONTENT_PRODUCT",
         },
-        // canActivate: [AuthGuard],
+        canActivate: [AuthGuard],
     },
     {
         path: "category",
@@ -19,7 +20,7 @@ const routes: Routes = [
         data: {
             functionCode: "CONTENT_CATEGORY",
         },
-        // canActivate: [AuthGuard],
+        canActivate: [AuthGuard],
     },
     {
         path: "order",
@@ -27,7 +28,7 @@ const routes: Routes = [
         data: {
             functionCode: "CONTENT_ORDER",
         },
-        // canActivate: [AuthGuard],
+        canActivate: [AuthGuard],
     },
 ];
 
